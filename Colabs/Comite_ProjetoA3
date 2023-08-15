@@ -1,0 +1,195 @@
+#Diogo De Jesus Gasparini | 822135221
+#João Vitor Nonato Dos Santos | 822163044
+#Lucas Cesar Parra | 822166659
+#Milena Porto Coyado | 822160378
+#Rafael De Macedo Barbosa | 821141019
+#Renan Dos Reis Negrão | 822148468
+#Ygor Fernandes Marsi | 822156379
+
+import pandas as pd
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+import sklearn.metrics as metrics
+# libraries for the files in google drive
+from pydrive.auth import GoogleAuth
+from google.colab import drive
+from pydrive.drive import GoogleDrive
+from google.colab import auth
+from oauth2client.client import GoogleCredentials
+from typing import List
+import numpy as np
+# from google.colab import files
+# uploaded = files.upload()
+# diabetes = pd.read_excel('diabetes_descritiva_SemCasasDecimais.xlsx')
+
+url = 'https://docs.google.com/spreadsheets/d/17ZLkHUblgL6G2E4UnqicIIuoffPrQNMn/edit?usp=drive_link&ouid=104199439520914361557&rtpof=true&sd=true'
+auth.authenticate_user()
+gauth = GoogleAuth()
+gauth.credentials = GoogleCredentials.get_application_default()
+drive = GoogleDrive(gauth)
+file_id = '17ZLkHUblgL6G2E4UnqicIIuoffPrQNMn'
+download = drive.CreateFile({'id': file_id})
+download.GetContentFile('diabetes_descritiva_SemCasasDecimais.xlsx')
+diabetes  = pd.read_excel('diabetes_descritiva_SemCasasDecimais.xlsx')
+
+# Separa as features/caracteristicas da classe alvo (target)
+
+X = diabetes.drop('Diabetes', axis=1).values  # Atributos
+y = diabetes['Diabetes']  # Classe alvo/target
+
+# Define que 25% dos dados será destinado a teste e o restante para treino
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+
+from sklearn import tree
+
+# APLICANDO O ALGORITMO DA ÁRVORE DE DECISÃO #
+def predict_arv(caracteristicas: List[int]):
+  modeloARV = tree.DecisionTreeClassifier(criterion='entropy')
+  modeloARV = modeloARV.fit(X_train, y_train)
+  pred_arv = modeloARV.predict(caracteristicas)
+
+  if pred_arv == 0 :
+    print('Arvore de Decisão acredita que não tenha diabetes')
+  else:
+    print('Arvore de Decisão acredita que tenha diabetes')
+
+  return pred_arv
+
+from sklearn.naive_bayes import GaussianNB
+
+# APLICANDO O ALGORITMO NAIVE BAYES #
+def predict_nvbayes(caracteristicas: List[int]):
+  modeloNB = GaussianNB()
+  modeloNB.fit(X_train, y_train)
+  pred_nb = modeloNB.predict(caracteristicas)
+
+  if pred_nb == 0 :
+    print('Naive Bayes acredita que não tenha diabetes')
+  else:
+    print('Naive Bayes Decisão acredita que tenha diabetes')
+
+  return pred_nb
+
+from sklearn.neighbors import KNeighborsClassifier
+# APLICA O ALGORITMO KNN #
+
+def predict_knn(caracteristicas: List[int]):
+  modeloKNN = KNeighborsClassifier(n_neighbors=3)
+  modeloKNN.fit(X_train, y_train)
+  pred_knn = modeloKNN.predict(caracteristicas)
+
+  if pred_knn == 0 :
+    print('KNN acredita que não tenha diabetes')
+  else:
+    print('KNN Decisão acredita que tenha diabetes')
+
+  return pred_knn
+
+# EXIBE A DECISAO DO COMITE COM BASE NA RESPOSTA DAS TÉCNICAS #
+def analise_comite(pred_arv, pred_nb, pred_knn):
+  tot_pdiabetes = 0
+  tot_ndiabetes = 0
+
+  # Arvore #
+  if pred_arv == 0 :
+    tot_pdiabetes = tot_pdiabetes + 1
+  else:
+    tot_ndiabetes = tot_ndiabetes + 1
+  # Naive Bayes #
+  if pred_nb == 0 :
+    tot_pdiabetes = tot_pdiabetes + 1
+  else:
+    tot_ndiabetes = tot_ndiabetes + 1
+  # KNN #
+  if pred_knn == 0 :
+    tot_pdiabetes = tot_pdiabetes + 1
+  else:
+    tot_ndiabetes = tot_ndiabetes + 1
+
+  if tot_ndiabetes >= 2:
+    print("O comitê acredita que a pessoa tem diabetes.")
+  else:
+    print("O comitê acredita que a pessoa não tem diabetes.")
+
+  if tot_ndiabetes == 3 or tot_pdiabetes == 3:
+    print("O comitê é unânime na opinião.")
+  else:
+    print("O comitê não é unânime na opinião.")
+
+    # RECEBE AS CARACTERISTICAS DAS PESSOAS #
+def receber_caracteristicas():
+
+    perguntas = ['De acordo com a seguinte escala, qual das opções atende a idade?\n1 = 18-24 / 2 = 25-29 / 3 = 30-34 / 4 = 35-39 / 5 = 40-44 / 6 = 45-49 / 7 = 50-54 / 8 = 55-59 / 9 = 60-64 / 10 = 65-69 / 11 = 70-74 / 12 = 75-79 / 13 = 80+',
+                'Qual é sexo atende a pessoa? 1 = Masculino / 0 = Feminino',
+                'Possui colesterol alto? 1 = Sim / 0 = Não',
+                'Realizou checagem de colesterol nos últimos 5 anos? 1 = Sim / 0 = Não',
+                'Índice de massa corporal',
+                'Histórico de tabagismo | 1 = Sim / 0 = Não',
+                'Possui presença de doença cardíaca coronariana (CHD) ou infarto do miocárdio (MI)? 1 = Sim / 0 = Não',
+                'Praticou atividade fisica nos últimos 30 dias, exceto trabalho? 1 = Sim / 0 = Não',
+                'Consome uma fruta ou mais por dia? 1 = Sim / 0 = Não',
+                'Consome um vegetal ou mais por dia? 1 = Sim / 0 = Não',
+                'Consome constantimente álcool? 1 = Sim / 0 = Não',
+                'De acordo com a seguinte escala, qual é a auto avaliação de saúde?\n1 = Excelente, 2 = Muito boa, 3 = Boa, 4 = Regular, 5 = Ruim',
+                'Esteve mentalmente doente nos últimos 30 dias? Se sim, quantos dias? Escala de 0 a 30',
+                'Esteve fisicamente doente nos últimos 30 dias? Se sim, quantos dias? Escala de 0 a 30',
+                'Possui dificuldade em caminhar e/ou subir escadas? 1 = Sim / 0 = Não',
+                'Histórico de derrame? 1 = Sim / 0 = Não',
+                'Possui pressão alta? 1 = Sim / 0 = Não']
+
+    inputs = []
+
+    for pgt in perguntas:
+      print(pgt)
+      inputs.append(int(input('R:')))
+
+    return [inputs]
+
+De acordo com a seguinte escala, qual das opções atende a idade?
+1 = 18-24 / 2 = 25-29 / 3 = 30-34 / 4 = 35-39 / 5 = 40-44 / 6 = 45-49 / 7 = 50-54 / 8 = 55-59 / 9 = 60-64 / 10 = 65-69 / 11 = 70-74 / 12 = 75-79 / 13 = 80+
+R:1
+Qual é sexo atende a pessoa? 1 = Masculino / 0 = Feminino
+R:1
+Possui colesterol alto? 1 = Sim / 0 = Não
+R:0
+Realizou checagem de colesterol nos últimos 5 anos? 1 = Sim / 0 = Não
+R:0
+Índice de massa corporal
+R:52
+Histórico de tabagismo | 1 = Sim / 0 = Não
+R:0
+Possui presença de doença cardíaca coronariana (CHD) ou infarto do miocárdio (MI)? 1 = Sim / 0 = Não
+R:0
+Praticou atividade fisica nos últimos 30 dias, exceto trabalho? 1 = Sim / 0 = Não
+R:1
+Consome uma fruta ou mais por dia? 1 = Sim / 0 = Não
+R:0
+Consome um vegetal ou mais por dia? 1 = Sim / 0 = Não
+R:1
+Consome constantimente álcool? 1 = Sim / 0 = Não
+R:1
+De acordo com a seguinte escala, qual é a auto avaliação de saúde?
+1 = Excelente, 2 = Muito boa, 3 = Boa, 4 = Regular, 5 = Ruim
+R:1
+Esteve mentalmente doente nos últimos 30 dias? Se sim, quantos dias? Escala de 0 a 30
+R:19
+Esteve fisicamente doente nos últimos 30 dias? Se sim, quantos dias? Escala de 0 a 30
+R:3
+Possui dificuldade em caminhar e/ou subir escadas? 1 = Sim / 0 = Não
+R:0
+Histórico de derrame? 1 = Sim / 0 = Não
+R:0
+Possui pressão alta? 1 = Sim / 0 = Não
+R:0
+
+# COMITÊ DE CLASSIFICADORES
+
+#print(caracteristicas)
+
+pred_arv = predict_arv(caracteristicas)
+
+pred_nb = predict_nvbayes(caracteristicas)
+
+pred_knn = predict_knn(caracteristicas)
+
+analise_comite(pred_arv, pred_nb, pred_knn)
