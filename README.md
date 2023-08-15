@@ -24,7 +24,18 @@ Por fim, há um gráfico de avaliação que analisa os dados anteriores e seleci
 
 O propósito deste estudo é analisar um conjunto de dados que contém as características de pessoas com diabetes. O objetivo principal é identificar as principais causas que contribuem para o desenvolvimento dessa doença, examinando a correlação entre os hábitos da pessoa, como sua saúde mental e física, que tem uma influência significativa no agravamento da diabetes. Além disso, investigaremos a influência da alimentação e de vícios como o consumo de álcool e tabaco. Ao identificar essas possíveis causas, buscaremos formas e hábitos que possam ser adotados para prevenir o desenvolvimento da doença.
 
-Diogo De Jesus Gasparini | 822135221            Milena Porto Coyado | 822160378
-João Vitor Nonato Dos Santos | 822163044 Rafael De Macedo Barbosa | 821141019
-Lucas Cesar Parra | 822160378                       Renan Dos Reis Negrão | 822148468
-Ygor Fernandes Marsi | 822156379
+##
+
+Diogo De Jesus Gasparini |     
+
+Milena Porto Coyado | 
+
+João Vitor Nonato Dos Santos | 
+
+Rafael De Macedo Barbosa | 
+
+Lucas Cesar Parra |        
+
+Renan Dos Reis Negrão | 
+
+Ygor Fernandes Marsi | 
